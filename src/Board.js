@@ -153,11 +153,26 @@
     hasAnyMajorDiagonalConflicts: function() {
       var n=this.get('n');
 
+
+      //initial check of the major diagonal axis (but only along the first row)
       for (var i=0;i<n;i++){
         if (this.hasMajorDiagonalConflictAt(i) ){
           return true;
         }
       }
+
+      //flips the matrix vertically so the other half of the board can be checked
+      this.flipBoard();
+
+      //does the secondary check for diagonal conflicts along the major axis
+      for (var i=0;i<n;i++){
+        if (this.hasMajorDiagonalConflictAt(i) ){
+          return true;
+        }
+      }
+
+      //returns the board to it's initial state
+      this.flipBoard();
 
       return false; // fixme
     },
@@ -177,18 +192,43 @@
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
       var n=this.get('n');
+      // first minor diagonal check
+      for (var i=0;i<n;i++){
+        this.get(i).reverse();
+      }
+      var hasConflict = this.hasAnyMajorDiagonalConflicts();
+      for (var i=0;i<n;i++){
+        this.get(i).reverse();
+      }
+
+      // flipboard on vertical axis and do same minor diagonal check
+      this.flipBoard();
+
       for (var i=0;i<n;i++){
         this.get(i).reverse();
       }
 
       var hasConflict = this.hasAnyMajorDiagonalConflicts();
 
-
       for (var i=0;i<n;i++){
         this.get(i).reverse();
       }
+       // replace original board!
+      this.flipBoard();
 
       return hasConflict; // fixme
+    },
+
+    flipBoard: function(){
+      var n = this.get('n');
+
+      for (var i = 0; i < n/2; i++){
+        var thingFromTheTop = this.get(i).slice();
+        var thingFromTheBottom = this.get(n-i-1).slice();
+        this.set(i, thingFromTheBottom);
+        this.set(n-i-1, thingFromTheTop);
+      }
+
     }
 
     /*--------------------  End of Helper Functions  ---------------------*/
