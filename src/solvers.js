@@ -55,6 +55,7 @@ window.findNQueensSolution = function(n) {
 
 
 
+
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return solution;
 };

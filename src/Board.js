@@ -229,7 +229,19 @@
         this.set(n-i-1, thingFromTheTop);
       }
 
+    },
+
+    hasConflict: function(rowIndex, columnIndex) {
+      var conflicted = false;
+
+      hasAnyRowConflicts(rowIndex);
+      hasAnyColumnConflicts(columnIndex);
+      hasAnyMajorDiagonalConflicts(columnIndex);
+      hasAnyMinorDiagonalConflicts(columnIndex);
+
+      return conflicted;
     }
+
 
     /*--------------------  End of Helper Functions  ---------------------*/
 
