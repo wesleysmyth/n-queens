@@ -232,14 +232,7 @@
     },
 
     hasConflict: function(rowIndex, columnIndex) {
-      var conflicted = false;
-
-      hasAnyRowConflicts(rowIndex);
-      hasAnyColumnConflicts(columnIndex);
-      hasAnyMajorDiagonalConflicts(columnIndex);
-      hasAnyMinorDiagonalConflicts(columnIndex);
-
-      return conflicted;
+      return (this.hasAnyRowConflicts(rowIndex) || this.hasAnyColumnConflicts(columnIndex) || this.hasAnyMajorDiagonalConflicts(columnIndex) || this.hasAnyMinorDiagonalConflicts(columnIndex));
     }
 
 
