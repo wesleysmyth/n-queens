@@ -79,25 +79,28 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
+
+
+      var count=0;
       var row=this.get(rowIndex);
-      for (var i=0, counter=0;i<row.length;i++){
-        if (row[i]>0){
-          counter++;
-        }
-        if (counter>1){
-          return true;
-        }
+      for (var i=0;i<row.length;i++){
+        count+=row[i];
       }
-      return false; // fixme
+      return count>1; // fixme
+
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
-      var numberOfRows=this.get('n');
-      for (var i=0;i<numberOfRows;i++){
-        if (this.hasRowConflictAt(i) ){
+
+
+      var size=this.get('n');
+      for (var i=0;i<size;i++){
+        var hasConflict=this.hasRowConflictAt(i);
+        if (hasConflict){
           return true;
-        };
+        }
+
       }
       return false; // fixme
     },
@@ -109,16 +112,16 @@
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
+
+
+      var count=0;
       var numberOfRows=this.get('n');
-      for (var i=0, count=0;i<numberOfRows;i++){
-        if (this.get(i)[colIndex]>0){
-          count++;
-        }
-        if (count>1){
-          return true;
-        }
+      for (var i=0;i<numberOfRows;i++){
+        var row=this.get(i);
+        count+=row[colIndex];
       }
-      return false; // fixme
+      return count>1; // fixme
+
     },
 
     // test if any columns on this board contain conflicts
@@ -138,13 +141,49 @@
     // --------------------------------------------------------------
     //
     // test if a specific major diagonal on this board contains a conflict
-    hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
+    hasMajorDiagonalConflictAt: function(columnIndex) {
+      //start at the rowToCheck
+      var n=this.get('n');
+      for (var i=columnIndex;i<n;i++){
+        var positionInNextRow=i+1;
+        var count=0;
+        for (var j=0;j<n;j++){
+          count+=this.get(j)[positionInNextRow];
+          if(count>1){
+            return true;
+          }
+          positionInNextRow++;
+        }
+      }
       return false; // fixme
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      return false; // fixme
+      var n=this.get('n');
+      var hasConflict=false;
+
+      //initial check of the major diagonal axis (but only along the first row)
+      for (var i=0;i<n;i++){
+        if (this.hasMajorDiagonalConflictAt(i) ){
+          hasConflict = true;
+        }
+      }
+
+      //flips the matrix vertically so the other half of the board can be checked
+      this.flipBoard();
+
+      //does the secondary check for diagonal conflicts along the major axis
+      for (var i=0;i<n;i++){
+        if (this.hasMajorDiagonalConflictAt(i) ){
+          hasConflict= true;
+        }
+      }
+
+      //returns the board to it's initial state
+      this.flipBoard();
+
+      return hasConflict; // fixme
     },
 
 
@@ -154,13 +193,57 @@
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
+
+
       return false; // fixme
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
-      return false; // fixme
+      var n=this.get('n');
+      // first minor diagonal check
+      for (var i=0;i<n;i++){
+        this.get(i).reverse();
+      }
+      var hasConflict = this.hasAnyMajorDiagonalConflicts();
+      for (var i=0;i<n;i++){
+        this.get(i).reverse();
+      }
+
+      // flipboard on vertical axis and do same minor diagonal check
+      this.flipBoard();
+
+      for (var i=0;i<n;i++){
+        this.get(i).reverse();
+      }
+
+      var hasConflict = this.hasAnyMajorDiagonalConflicts();
+
+      for (var i=0;i<n;i++){
+        this.get(i).reverse();
+      }
+       // replace original board!
+      this.flipBoard();
+
+      return hasConflict; // fixme
+    },
+
+    flipBoard: function(){
+      var n = this.get('n');
+
+      for (var i = 0; i < n/2; i++){
+        var thingFromTheTop = this.get(i).slice();
+        var thingFromTheBottom = this.get(n-i-1).slice();
+        this.set(i, thingFromTheBottom);
+        this.set(n-i-1, thingFromTheTop);
+      }
+
+    },
+
+    hasConflict: function(rowIndex, columnIndex) {
+      return (this.hasAnyRowConflicts(rowIndex) || this.hasAnyColConflicts(columnIndex) || this.hasAnyMajorDiagonalConflicts(columnIndex) || this.hasAnyMinorDiagonalConflicts(columnIndex));
     }
+
 
     /*--------------------  End of Helper Functions  ---------------------*/
 
