@@ -145,7 +145,7 @@
       //start at the rowToCheck
       var n=this.get('n');
       for (var i=columnIndex;i<n;i++){
-        var positionInNextRow=i+1;
+        var positionInNextRow=i;
         var count=0;
         for (var j=0;j<n;j++){
           count+=this.get(j)[positionInNextRow];
@@ -241,6 +241,12 @@
     },
 
     hasConflict: function(rowIndex, columnIndex) {
+      console.log("-conflicts:");
+      console.log("---rows: "+this.hasAnyRowConflicts(rowIndex));
+      console.log("---columns: "+this.hasAnyColConflicts(columnIndex));
+      console.log("---majorDiagonal: "+this.hasAnyMajorDiagonalConflicts(columnIndex));
+      console.log("---minorDiagonal: "+this.hasAnyMinorDiagonalConflicts(columnIndex));
+
       return (this.hasAnyRowConflicts(rowIndex) || this.hasAnyColConflicts(columnIndex) || this.hasAnyMajorDiagonalConflicts(columnIndex) || this.hasAnyMinorDiagonalConflicts(columnIndex));
     }
 

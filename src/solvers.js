@@ -55,6 +55,7 @@ window.findNQueensSolution = function(n) {
   }
   var n=board.get('n');
 
+
   var checkOneRow=function(rowIndex){
     if (rowIndex===n){
       return true;
@@ -70,14 +71,10 @@ window.findNQueensSolution = function(n) {
 
 
       board.togglePiece(rowIndex,i);
-      console.log(rowIndex+" "+i);
-      console.log(JSON.stringify(copyBoardState() ))
 
 
       if (board.hasConflict(rowIndex,i) ){
         board.togglePiece(rowIndex,i);
-        console.log(rowIndex+" "+i);
-        console.log(JSON.stringify(copyBoardState() ))
 
       }
       else{
@@ -85,15 +82,11 @@ window.findNQueensSolution = function(n) {
         nextRowWorks=checkOneRow(rowIndex+1);
         if (!nextRowWorks && i!==n-1){
           board.togglePiece(rowIndex,i);
-          console.log(rowIndex+" "+i);
-          console.log(JSON.stringify(copyBoardState() ))
 
           weHaveFoundAHomeForHer=false;
         }
         if (!nextRowWorks && i===n-1){
           board.togglePiece(rowIndex,i);
-          console.log(rowIndex+" "+i);
-          console.log(JSON.stringify(copyBoardState() ))
 
           weHaveFoundAHomeForHer=false;
         }
@@ -137,12 +130,89 @@ window.findNQueensSolution = function(n) {
 window.countNQueensSolutions = function(n) {
   var solutionCount = 0; //fixme
 
-  //walk the board helper function
-  //place a queen
-    //check for conflict
-    //
-    //if there is a conflict: remove queen and place a queen at the next space in the current row
-    //if we reach the end of the row and no place to insert a queen was found go back
+  var board=new Board({n:n});
+  if (n===2 || n===3){
+    return 0;
+  }
+  var n=board.get('n');
+
+  var checkOneRow=function(rowIndex){
+
+    if (rowIndex===n){
+      solutionCount++;
+      console.log("loggin a solution: ");
+      console.log(JSON.stringify(copyBoardState() ) );
+      return false;
+    }
+
+
+
+    var weHaveFoundAHomeForHer=false;
+    var nextRowWorks=false;
+
+    for (var i=0;i<n;i++){
+
+
+      board.togglePiece(rowIndex,i);
+      console.log(rowIndex+" "+i);
+      console.log(JSON.stringify(copyBoardState() ))
+
+
+      if (board.hasConflict(rowIndex,i) ){
+        board.togglePiece(rowIndex,i);
+        console.log(rowIndex+" "+i);
+        console.log(JSON.stringify(copyBoardState() ))
+
+      }
+      else{
+        weHaveFoundAHomeForHer=true;
+        nextRowWorks=checkOneRow(rowIndex+1);
+        if (!nextRowWorks && i!==n-1){
+          board.togglePiece(rowIndex,i);
+          console.log(rowIndex+" "+i);
+          console.log(JSON.stringify(copyBoardState() ))
+
+          weHaveFoundAHomeForHer=false;
+        }
+        if (!nextRowWorks && i===n-1){
+          board.togglePiece(rowIndex,i);
+          console.log(rowIndex+" "+i);
+          console.log(JSON.stringify(copyBoardState() ))
+
+          weHaveFoundAHomeForHer=false;
+        }
+      }
+
+      //if at end of row
+      if (!weHaveFoundAHomeForHer && i===n-1){
+        return false;
+      }
+
+      if (i===n-1 && rowIndex===0){
+        return true;
+      }
+
+    }
+
+
+    return nextRowWorks;
+  };
+
+  function copyBoardState(){
+    var n=board.get('n');
+    var copyBoard=[];
+    for (var i=0;i<n;i++){
+      var row=board.get(i).slice();
+      copyBoard.push(row);
+    }
+    return copyBoard;
+  };
+
+
+
+  //console.log(JSON.stringify(copyBoardState() ));
+
+  checkOneRow(0);
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
